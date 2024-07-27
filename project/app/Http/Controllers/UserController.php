@@ -4,37 +4,70 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use App\Models\Role;
 
+use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreUserRequest ;
+use Illuminate\Support\Facades\Hash ;
 class UserController extends Controller
 {
-    public function addUser(Request $request)
+    public function addUser(StoreUserRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
         ]);
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->save();
-
-        return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
+        return response()->json($user, 201);
     }
 
-    // Function to fetch user data
     public function getUser($id)
     {
-        $user = User::find($id);
+        $user = User::with('Profile' ,'roles')->find($id);
 
         if ($user) {
             return response()->json(['user' => $user], 200);
         } else {
             return response()->json(['message' => 'User not found'], 404);
         }
+    }
+
+    public function attachRole(Request $request , $id) {
+        $request->validate([
+            'role_id' => 'required|exists:roles,id'
+        ]) ;
+
+        $user = User::find($id) ;
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->roles()->attach($request->role_id);
+
+        return response()->json(['message' => 'Role attached successfully']);
+    }
+
+    public function getUserRoles($id)
+    {
+        $user = User::with('roles')->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user->roles);
+    }
+
+    public function showUserWithPosts($id)
+    {
+        $user = User::with('posts')->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json($user);
     }
 }
