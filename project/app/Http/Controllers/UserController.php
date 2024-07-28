@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreUserRequest ;
@@ -18,6 +19,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+        $token = $user->createToken('LaravelPassportToken')->accessToken;
 
         return response()->json($user, 201);
     }
