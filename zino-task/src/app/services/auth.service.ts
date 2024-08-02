@@ -1,6 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  roles: string[];
+}
+
+interface AuthResponse {
+  user: User;
+  access_token: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -8,21 +20,40 @@ import { BehaviorSubject, map, Observable } from 'rxjs';
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+  register(user: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, user);
   }
 
-  login(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, userData);
+  login(credentials: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, credentials);
   }
 
-  getStudentView(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/student-view`);
+  getStudentView(token: string): Observable<any> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.apiUrl}/student-view`, { headers });
   }
 
-  getTeacherView(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/teacher-view`);
+  getTeacherView(token: string): Observable<any> {
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.apiUrl}/teacher-view`, { headers });
   }
+
+  searchStudents(query: string) {
+    return this.http.get<any>(`/api/search-students?query=${query}`);
+  }
+  
+  sendTeacherRequest(studentId: number) {
+    return this.http.post<any>('/api/send-teacher-request', { student_id: studentId });
+  }
+  
+  getTeacherRequests() {
+    return this.http.get<any>('/api/teacher-requests');
+  }
+  
+  respondToTeacherRequest(requestId: number, response: string) {
+    return this.http.post<any>('/api/respond-teacher-request', { request_id: requestId, response: response });
+  }
+  
 }

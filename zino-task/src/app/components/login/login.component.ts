@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 
@@ -11,25 +11,34 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
-  loginData = { email: '', password: '' };
+export class LoginComponent{
+  credentials = { email: '', password: '' };
+  errorMessage!:string 
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
-  onLogin() {
-    this.authService.login(this.loginData).subscribe(
-      (response) => {
-        localStorage.setItem('access_token', response.access_token);
-        const userRole = response.user.roles[0].name;
-        if (userRole === 'student') {
-          this.router.navigate(['/student-view']);
-        } else if (userRole === 'teacher') {
-          this.router.navigate(['/teacher-view']);
-        }
-      },
-      (error) => {
-        console.error('Login failed', error);
+  login() {
+    this.authService.login(this.credentials).subscribe(response => {
+      localStorage.setItem('token', response.access_token);
+      console.log('Login successful', response);
+  
+      // Extract the user's role from the response
+      const userRoles = response.user.roles.map((role: any) => role.name);
+  
+      if (userRoles.includes('student')) {
+        this.router.navigate(['/student']);
+      } else if (userRoles.includes('teacher')) {
+        this.router.navigate(['/teacher']);
+      } else {
+        console.error('Unknown role:', userRoles);
+        // Optionally navigate to a default route
       }
-    );
+    }, error => {
+      console.error('Login failed', error);
+    });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

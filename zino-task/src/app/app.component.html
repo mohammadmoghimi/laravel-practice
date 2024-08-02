@@ -1,11 +1,1 @@
-<nav>
-  <ng-container *ngIf="authService.currentUserValue">
-    <a routerLink="/{{ authService.getRole() }}-dashboard">Dashboard</a>
-    <button (click)="logout()">Logout</button>
-  </ng-container>
-  <ng-container *ngIf="!authService.currentUserValue">
-    <a routerLink="/login">Login</a>
-    <a routerLink="/register">Register</a>
-  </ng-container>
-</nav>
 <router-outlet></router-outlet>

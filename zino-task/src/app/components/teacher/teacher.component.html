@@ -1,1 +1,12 @@
-<h1>Teacher Dashboard</h1>
+<div>
+    <h2>Search Students</h2>
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search for students by name" (input)="searchStudents()" />
+    
+    <ul>
+      <li *ngFor="let student of students">
+        {{ student.name }}
+        <button (click)="sendRequest(student.id)">Send Request</button>
+      </li>
+    </ul>
+  </div>
+  

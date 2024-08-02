@@ -11,18 +11,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  registerData = { name: '', email: '', password: '', password_confirmation: '', role: 'student' };
+  user = { name: '', email: '', password: '', password_confirmation: '', role: 'student' };
+  errorMessage!: string;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
-  onRegister() {
-    this.authService.register(this.registerData).subscribe(
-      (response) => {
+  register() {
+    this.authService.register(this.user).subscribe(
+      response => {
         console.log('Registration successful', response);
         this.router.navigate(['/login']);
       },
-      (error) => {
+      error => {
         console.error('Registration failed', error);
+        this.errorMessage = 'Registration failed. Please try again.';
       }
     );
   }

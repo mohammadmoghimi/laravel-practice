@@ -1,1 +1,10 @@
-<h1>Student Dashboard</h1>
+<div>
+  <h2>Teacher Requests</h2>
+  <ul>
+    <li *ngFor="let request of requests">
+      {{ request.teacher.name }} wants to be your teacher.
+      <button (click)="respondToRequest(request.id, 'accept')">Accept</button>
+      <button (click)="respondToRequest(request.id, 'deny')">Deny</button>
+    </li>
+  </ul>
+</div>

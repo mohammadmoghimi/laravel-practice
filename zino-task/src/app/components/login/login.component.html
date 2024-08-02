@@ -1,11 +1,17 @@
-<form (ngSubmit)="onLogin()">
+<h2>Login</h2>
+<form (ngSubmit)="login()">
   <div>
-    <label>Email:</label>
-    <input type="email" [(ngModel)]="loginData.email" name="email" required>
+    <label for="email">Email:</label>
+    <input type="email" [(ngModel)]="credentials.email" name="email" required>
   </div>
+
   <div>
-    <label>Password:</label>
-    <input type="password" [(ngModel)]="loginData.password" name="password" required>
+    <label for="password">Password:</label>
+    <input type="password" [(ngModel)]="credentials.password" name="password" required>
   </div>
+
   <button type="submit">Login</button>
 </form>
+<button (click)="goToRegister()">register</button>
+
+<p *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</p>
