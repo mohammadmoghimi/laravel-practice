@@ -2,9 +2,9 @@
   <h2>Teacher Requests</h2>
   <ul>
     <li *ngFor="let request of requests">
-      {{ request.teacher.name }} wants to be your teacher.
-      <button (click)="respondToRequest(request.id, 'accept')">Accept</button>
-      <button (click)="respondToRequest(request.id, 'deny')">Deny</button>
+      {{ request.teacher.name }} has requested to be your teacher.
+      <button (click)="respondToRequest(request.id, 'accepted')">Accept</button>
+      <button (click)="respondToRequest(request.id, 'denied')">Deny</button>
     </li>
   </ul>
 </div>

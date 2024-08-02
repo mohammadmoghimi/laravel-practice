@@ -40,20 +40,36 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/teacher-view`, { headers });
   }
 
-  searchStudents(query: string) {
-    return this.http.get<any>(`/api/search-students?query=${query}`);
+  searchStudents(query: string): Observable<any> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.apiUrl}/search-students?query=${query}`, { headers });
   }
   
-  sendTeacherRequest(studentId: number) {
-    return this.http.post<any>('/api/send-teacher-request', { student_id: studentId });
+  sendTeacherRequest(studentId: number): Observable<any> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.post(`${this.apiUrl}/send-teacher-request`, { student_id: studentId }, { headers });
   }
   
-  getTeacherRequests() {
-    return this.http.get<any>('/api/teacher-requests');
+  getTeacherRequests(): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get(`${this.apiUrl}/teacher-requests`, { headers });
   }
   
-  respondToTeacherRequest(requestId: number, response: string) {
-    return this.http.post<any>('/api/respond-teacher-request', { request_id: requestId, response: response });
+  respondToTeacherRequest(requestId: number, status: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post(`${this.apiUrl}/respond-teacher-request`, { requestId, status }, { headers });
   }
   
 }

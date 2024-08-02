@@ -16,26 +16,26 @@ export class StudentComponent {
 
   constructor(private authService: AuthService) {}
 
-  ngOnInit() {
-    this.loadRequests();
+  ngOnInit(): void {
+    this.getTeacherRequests();
   }
 
-  loadRequests() {
+  getTeacherRequests() {
     this.authService.getTeacherRequests().subscribe(
       response => {
         this.requests = response.requests;
       },
       error => {
-        console.error('Error loading requests', error);
+        console.error('Error fetching teacher requests', error);
       }
     );
   }
 
-  respondToRequest(requestId: number, response: string) {
-    this.authService.respondToTeacherRequest(requestId, response).subscribe(
-      res => {
-        console.log('Response sent successfully', res);
-        this.loadRequests();
+  respondToRequest(requestId: number, status: string) {
+    this.authService.respondToTeacherRequest(requestId, status).subscribe(
+      response => {
+        console.log('Request response sent successfully', response);
+        this.getTeacherRequests(); // Refresh the list after responding
       },
       error => {
         console.error('Error responding to request', error);
